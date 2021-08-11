@@ -30,6 +30,7 @@ public class UnitUtils {
     public enum Units {
         MM("mm", Localization.getString("millimeters")),
         INCH("\"", Localization.getString("inches")),
+        DEG("deg", Localization.getString("degrees")),
         UNKNOWN("", Localization.getString("unknown"));
 
         public final String abbreviation;
