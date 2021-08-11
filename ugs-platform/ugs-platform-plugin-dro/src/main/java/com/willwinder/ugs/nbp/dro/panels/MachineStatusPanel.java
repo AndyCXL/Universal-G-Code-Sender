@@ -243,6 +243,8 @@ public class MachineStatusPanel extends JPanel implements UGSEventListener, Cont
         switch (u) {
             case MM:
             case INCH:
+            //
+            case DEG:
                 break;
             default:
                 units = Units.MM;
