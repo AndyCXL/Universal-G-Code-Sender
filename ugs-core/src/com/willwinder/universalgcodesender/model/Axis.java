@@ -32,7 +32,8 @@ public enum Axis {
   }
 
   public boolean isLinear() {
-    return this == X || this == Y || this == Z;
+    // Dirty hack to make A visible
+    return this == X || this == Y || this == Z || this == A;
   }
 }
 
