@@ -561,7 +561,8 @@ public class GrblUtils {
                 result.b = Double.parseDouble(matcher.group(5));
             }
             if (matcher.group(4) != null) {
-                result.a = Double.parseDouble(matcher.group(4));
+                //result.a = Double.parseDouble(matcher.group(4));
+                result.a = Double.parseDouble(matcher.group(5));
             }
 
             return result;

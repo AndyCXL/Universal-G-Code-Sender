@@ -188,7 +188,14 @@ public class MachineStatusPanel extends JPanel implements UGSEventListener, Cont
 
     private void initializeAxisPanel(Axis axis) {
         AxisPanel panel = new AxisPanel(axis, fontManager);
-        panel.setVisible(axis.isLinear());
+        // Better strategy needed for deciding which axes to show, not just .isLinear()
+	if (this.backend != null) {
+		Capabilities c = backend.getController().getCapabilities();
+	        Settings s = backend.getSettings();
+        	panel.setVisible( (c.hasAxis(axis)||axis.isLinear()) && s.isAxisEnabled(axis) );
+	} else {
+            panel.setVisible(axis.isLinear());
+        }
         panel.setEnabled(false);
         axisPanels.put(axis, panel);
         axisPanel.add(panel, "growx");
