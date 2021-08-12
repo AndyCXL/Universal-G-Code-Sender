@@ -64,6 +64,7 @@ public class ControllerSettings {
     public enum CONTROLLER {
         GRBL("GRBL"),
         GRBL_ESP32("GRBL ESP32"),
+        GRBL_MEGA5X("GRBL Mega5X"),
         SMOOTHIE("SmoothieBoard"),
         TINYG("TinyG"),
         G2CORE("g2core"),
@@ -110,6 +111,8 @@ public class ControllerSettings {
                 return new GrblController();
             case GRBL_ESP32:
                 return new GrblEsp32Controller();
+            case GRBL_MEGA5X:
+                return new GrblMega5XController();
             case SMOOTHIE:
                 return new SmoothieController();
             case TINYG:

@@ -102,8 +102,8 @@ public class GrblMega5XController extends GrblController {
             //   addCapability() if not exists
             */
             char nthChar;
-            for (int n=1; n <= axes.get(); n++) {
-                nthChar = Character.toUpperCase(order.get().charAt(n));
+            for (int n=0; n < axes.get(); n++) {
+                nthChar = order.toString().charAt(n);
                 switch(nthChar) {
                     case 'X':
                         if (!this.capabilities.hasCapability(X_AXIS))
