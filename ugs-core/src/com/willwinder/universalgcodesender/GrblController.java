@@ -63,7 +63,7 @@ public class GrblController extends AbstractController {
     private final GrblFirmwareSettings firmwareSettings;
 
     // Polling state
-    private ControllerStatus controllerStatus = new ControllerStatus(ControllerState.DISCONNECTED, new Position(0,0,0,Units.MM), new Position(0,0,0,Units.MM));
+    public ControllerStatus controllerStatus = new ControllerStatus(ControllerState.DISCONNECTED, new Position(0,0,0,Units.MM), new Position(0,0,0,Units.MM));
 
     // Canceling state
     private Boolean isCanceling = false;     // Set for the position polling thread.
@@ -74,7 +74,7 @@ public class GrblController extends AbstractController {
      * For storing a temporary state if using single step mode when entering the state
      * check mode. When leaving check mode the temporary single step mode will be reverted.
      */
-    private boolean temporaryCheckSingleStepMode = false;
+    public boolean temporaryCheckSingleStepMode = false;
 
     public GrblController(AbstractCommunicator comm) {
         super(comm);
@@ -595,7 +595,8 @@ public class GrblController extends AbstractController {
     }
 
     // No longer a listener event
-    private void handleStatusString(final String string) {
+    //private void handleStatusString(final String string) {
+    public void handleStatusString(final String string) {
         if (this.capabilities == null) {
             return;
         }

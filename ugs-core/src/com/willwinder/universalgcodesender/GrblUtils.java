@@ -547,27 +547,11 @@ public class GrblUtils {
     }
     
     static private Position getPositionFromStatusString(final String status, final Pattern pattern, Units reportingUnits) {
-        /* GrblMega5XController knows the reported Axis order, eg: XYZ or XYA or XYZYA
-        // and added capabilities according to each unique axis letter, even if the count
-        // of axes was greater (XYZYA is 4 distinct letters 5 positions). Position reporting
-        // is per physical axis, so XYZYA is the string order even though Y is duplicated
-        // All other controllers it appears are XYZABC order for the reported axis count
-        //
-        // AbstractController and overrides now has String getAxisLetterOrder() which returns
-        // the controller's obtained (eg: XYZYA) or presumed default ordering (XYZABC)
-        */
         Matcher matcher = pattern.matcher(status);
       
         // Do we have any matches, if so assign them to axes
         if (matcher.find()) {
-            // Is Axis ordering default, or dictated by the controller
-            // if (version.hasCapability(AXIS_ORDERING));
-            // controller.getAxisLetterOrder();
-            // Need to know the controller for this to pull through...
-            
-            //BackendAPI backend = null; // How to get the current instance?
-            //String axisLetterOrder = backend.getController().getAxisLetterOrder();
-            
+
             Position result = new Position(Double.parseDouble(matcher.group(1)),
                     Double.parseDouble(matcher.group(2)),
                     Double.parseDouble(matcher.group(3)),
@@ -581,8 +565,8 @@ public class GrblUtils {
                 result.b = Double.parseDouble(matcher.group(5));
             }
             if (matcher.group(4) != null) {
-                // Dirty hack to prove the issue with dual-Y axes (5 not 4)
-                result.a = Double.parseDouble(matcher.group(5));
+                // A quick hack to map XYZYA correctly is group(5));
+                result.a = Double.parseDouble(matcher.group(4));
             }
 
             return result;

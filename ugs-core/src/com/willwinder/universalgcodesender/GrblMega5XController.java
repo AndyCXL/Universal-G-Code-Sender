@@ -24,6 +24,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.willwinder.universalgcodesender.CapabilitiesConstants.*;
+import com.willwinder.universalgcodesender.i18n.Localization;
+import com.willwinder.universalgcodesender.listeners.ControllerState;
+import com.willwinder.universalgcodesender.listeners.ControllerStatus;
+import com.willwinder.universalgcodesender.listeners.MessageType;
+import com.willwinder.universalgcodesender.model.Position;
+import com.willwinder.universalgcodesender.model.UGSEvent;
+import static com.willwinder.universalgcodesender.model.UGSEvent.ControlState.COMM_CHECK;
+import com.willwinder.universalgcodesender.model.UnitUtils;
 import java.util.logging.Level;
 
 /**
@@ -32,6 +40,7 @@ import java.util.logging.Level;
  */
 
 public class GrblMega5XController extends GrblController {
+    
     private final Capabilities capabilities = new Capabilities();
     private Logger logger = Logger.getLogger(GrblMega5XController.class.getName());
     
@@ -153,5 +162,39 @@ public class GrblMega5XController extends GrblController {
         }
 
         super.rawResponseHandler(response);
+    }
+    
+    // No longer a listener event
+    @Override
+    public void handleStatusString(final String string) {
+        if (this.capabilities == null) {
+            return;
+        }
+
+        UGSEvent.ControlState before = getControlState();
+        ControllerState beforeState = controllerStatus == null ? ControllerState.UNKNOWN : controllerStatus.getState();
+
+        controllerStatus = GrblMega5XUtils.getStatusFromStatusString(
+                controllerStatus, string, capabilities, getFirmwareSettings().getReportingUnits(), AxisOrder);
+
+        // Make UGS more responsive to the state being reported by GRBL.
+        if (before != getControlState()) {
+            this.dispatchStateChange(getControlState());
+        }
+
+        // GRBL 1.1 jog complete transition
+        if (beforeState == ControllerState.JOG && controllerStatus.getState() == ControllerState.IDLE) {
+            this.comm.cancelSend();
+        }
+
+        // Set and restore the step mode when transitioning from CHECK mode to IDLE.
+        if (before == COMM_CHECK && getControlState() != COMM_CHECK) {
+            setSingleStepMode(temporaryCheckSingleStepMode);
+        } else if (before != COMM_CHECK && getControlState() == COMM_CHECK) {
+            temporaryCheckSingleStepMode = getSingleStepMode();
+            setSingleStepMode(true);
+        }
+
+        dispatchStatusString(controllerStatus);
     }
 }
