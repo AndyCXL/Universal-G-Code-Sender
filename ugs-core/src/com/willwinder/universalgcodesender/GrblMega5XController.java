@@ -89,17 +89,19 @@ public class GrblMega5XController extends GrblController {
             this.capabilities.removeCapability(B_AXIS);
             this.capabilities.removeCapability(C_AXIS);
 
-            /* Axes defined the number of distinct axes, order defines the
+            /* Axes defines the number of distinct axes, Order defines the
             // sequence and any duplication, eg: dual-Y or dual-X configs
-            // eg: 3=XYA 3 distinct, or 5=XYZYA 4 distinct
+            // eg: 3=XYZ 3 distinct, 3=XYA 3 distinct, or 5=XYZYA 4 distinct
             // Ignore for now that Mega 5X allows letters other than ABC
             //
             // Strategy for coping with non XYZABC order, and duplicates:
             // Iterate 1..axes.get()
-            //   Obtain nth axis letter from order.get()
-            //   Identify relevant n_AXIS enum
-            //   Test if this.capabilities.hasCapability() already exists
-            //   addCapability() if not exists
+            //   Obtain nth axis letter from order
+            //   Test if this.capabilities.hasCapability(n_AXIS) already exists
+            //   and addCapability() if not
+            //
+            // Capabilities now added for each distinct axis letter, potentially
+            // different (fewer) than the number of physical axes Mega5X reports
             */
             char nthChar;
             for (int n=0; n < axes.get(); n++) {

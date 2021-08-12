@@ -546,6 +546,14 @@ public class GrblUtils {
     }
     
     static private Position getPositionFromStatusString(final String status, final Pattern pattern, Units reportingUnits) {
+        /* GrblMega5XController knows the reported Axis order, eg: XYZ or XYA or XYZYA
+        // and added capabilities according to each unique axis letter, even if the count
+        // of axes was greater (XYZYA is 4 distinct letters, 5 positions. Position reporting
+        // is per physical axis, so XYZYA is the string order even though Y is duplicated
+        // All other controllers it appears are XYZABC order for the reported axis count
+        //
+        // ...how to establish which controller is in use, thus possibly non XYZABC ordering?
+        */
         Matcher matcher = pattern.matcher(status);
         if (matcher.find()) {
             Position result = new Position(Double.parseDouble(matcher.group(1)),
@@ -561,7 +569,7 @@ public class GrblUtils {
                 result.b = Double.parseDouble(matcher.group(5));
             }
             if (matcher.group(4) != null) {
-                // Dirty hack to prove the issue with dual-Y axes
+                // Dirty hack to prove the issue with dual-Y axes (5 not 4)
                 result.a = Double.parseDouble(matcher.group(5));
             }
 
