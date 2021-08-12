@@ -88,8 +88,6 @@ public class GrblMega5XController extends GrblController {
         Optional<String> order = getAxisOrder(response);
         
         if (axes.isPresent()) {
-            //logger.info("Axis Count: " + axes.get() + " Order: " + order.get());
-            
             this.capabilities.removeCapability(X_AXIS);
             this.capabilities.removeCapability(Y_AXIS);
             this.capabilities.removeCapability(Z_AXIS);
@@ -148,8 +146,10 @@ public class GrblMega5XController extends GrblController {
             } else {
                 AxisOrder = "XYZABC";
             }
-            // Log outcome, and to aid diagnostics
-            logger.log(Level.INFO,"Axis Count: " + axes.get() + " Order: " + order.get());
+            // Log outcome, and to aid machine and setup diagnostics
+            logger.log(Level.CONFIG, "Axes:{0} Order:{1}",
+                new Object[] {axes.get(), order.get()}
+            );
         }
 
         super.rawResponseHandler(response);
