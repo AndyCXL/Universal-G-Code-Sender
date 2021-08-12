@@ -948,6 +948,11 @@ public abstract class AbstractController implements CommunicatorListener, IContr
         }
     }
 
+    public String getAxisLetterOrder(){
+        // Default return so there is always a valid sequence
+        return "XYZABC";    
+    }
+    
     protected String getDistanceModeCode() {
         return distanceModeCode;
     }

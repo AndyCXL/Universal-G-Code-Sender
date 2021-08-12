@@ -529,6 +529,7 @@ public class GrblUtils {
     static Pattern machinePattern = Pattern.compile("(?<=MPos:)(-?\\d*\\.?\\d*),(-?\\d*\\.?\\d*),(-?\\d*\\.?\\d*)(?:,(-?\\d*\\.?\\d+))?(?:,(-?\\d*\\.?\\d+))?(?:,(-?\\d*\\.?\\d+))?");
     static Pattern workPattern = Pattern.compile("(?<=WPos:)(-?\\d*\\.?\\d*),(-?\\d*\\.?\\d*),(-?\\d*\\.?\\d*)(?:,(-?\\d*\\.?\\d+))?(?:,(-?\\d*\\.?\\d+))?(?:,(-?\\d*\\.?\\d+))?");
     static Pattern wcoPattern = Pattern.compile("(?<=WCO:)(-?\\d*\\.?\\d*),(-?\\d*\\.?\\d*),(-?\\d*\\.?\\d*)(?:,(-?\\d*\\.?\\d+))?(?:,(-?\\d*\\.?\\d+))?(?:,(-?\\d*\\.?\\d+))?");
+
     static protected Position getMachinePositionFromStatusString(final String status, final Capabilities version, Units reportingUnits) {
         if (version.hasCapability(GrblCapabilitiesConstants.REAL_TIME)) {
             return GrblUtils.getPositionFromStatusString(status, machinePattern, reportingUnits);
@@ -548,14 +549,25 @@ public class GrblUtils {
     static private Position getPositionFromStatusString(final String status, final Pattern pattern, Units reportingUnits) {
         /* GrblMega5XController knows the reported Axis order, eg: XYZ or XYA or XYZYA
         // and added capabilities according to each unique axis letter, even if the count
-        // of axes was greater (XYZYA is 4 distinct letters, 5 positions. Position reporting
+        // of axes was greater (XYZYA is 4 distinct letters 5 positions). Position reporting
         // is per physical axis, so XYZYA is the string order even though Y is duplicated
         // All other controllers it appears are XYZABC order for the reported axis count
         //
-        // ...how to establish which controller is in use, thus possibly non XYZABC ordering?
+        // AbstractController and overrides now has String getAxisLetterOrder() which returns
+        // the controller's obtained (eg: XYZYA) or presumed default ordering (XYZABC)
         */
         Matcher matcher = pattern.matcher(status);
+      
+        // Do we have any matches, if so assign them to axes
         if (matcher.find()) {
+            // Is Axis ordering default, or dictated by the controller
+            // if (version.hasCapability(AXIS_ORDERING));
+            // controller.getAxisLetterOrder();
+            // Need to know the controller for this to pull through...
+            
+            //BackendAPI backend = null; // How to get the current instance?
+            //String axisLetterOrder = backend.getController().getAxisLetterOrder();
+            
             Position result = new Position(Double.parseDouble(matcher.group(1)),
                     Double.parseDouble(matcher.group(2)),
                     Double.parseDouble(matcher.group(3)),
@@ -575,7 +587,7 @@ public class GrblUtils {
 
             return result;
         }
-        
+        // No match, default return null
         return null;
     }
 

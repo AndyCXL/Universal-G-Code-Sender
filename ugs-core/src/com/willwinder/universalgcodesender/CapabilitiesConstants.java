@@ -86,4 +86,7 @@ public class CapabilitiesConstants {
     public static final String A_AXIS = "A_AXIS";
     public static final String B_AXIS = "B_AXIS";
     public static final String C_AXIS = "C_AXIS";
+    
+    //
+    public static final String AXIS_ORDERING = "AXIS_ORDERING";
 }

@@ -98,7 +98,7 @@ public class MachineStatusPanel extends JPanel implements UGSEventListener, Cont
         this.backend = backend;
         if (this.backend != null) {
             this.backend.addUGSEventListener(this);
-            this.backend.addControllerStateListener(this);
+            this.backend.addControllerStateListener(this); 
         }
         statePollTimer = createTimer();
 

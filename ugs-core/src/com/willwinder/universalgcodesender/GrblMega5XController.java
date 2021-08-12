@@ -24,6 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.willwinder.universalgcodesender.CapabilitiesConstants.*;
+import java.util.logging.Level;
 
 /**
  *
@@ -32,8 +33,9 @@ import static com.willwinder.universalgcodesender.CapabilitiesConstants.*;
 
 public class GrblMega5XController extends GrblController {
     private final Capabilities capabilities = new Capabilities();
-    private static final Logger logger = Logger.getLogger(GrblMega5XController.class.getName());
+    private Logger logger = Logger.getLogger(GrblMega5XController.class.getName());
     
+    static String AxisOrder = null;
     static Pattern axisCountPattern = Pattern.compile("\\[AXS:(\\d*):([XYZABC]*)]");
 
     public GrblMega5XController() {
@@ -69,6 +71,12 @@ public class GrblMega5XController extends GrblController {
         //this.comm.streamCommands();
     }
 
+    // Grbl Mega5X can sequence axis letters differently to XYZABC
+    @Override
+    public String getAxisLetterOrder(){
+        return AxisOrder;    
+    }
+    
     @Override
     protected void rawResponseHandler(String response) {
         /*
@@ -80,7 +88,7 @@ public class GrblMega5XController extends GrblController {
         Optional<String> order = getAxisOrder(response);
         
         if (axes.isPresent()) {
-            logger.info("Axis Count: " + axes.get() + " Order: " + order.get());
+            //logger.info("Axis Count: " + axes.get() + " Order: " + order.get());
             
             this.capabilities.removeCapability(X_AXIS);
             this.capabilities.removeCapability(Y_AXIS);
@@ -105,7 +113,7 @@ public class GrblMega5XController extends GrblController {
             */
             char nthChar;
             for (int n=0; n < axes.get(); n++) {
-                nthChar = order.toString().charAt(n);
+                nthChar = order.get().charAt(n);
                 switch(nthChar) {
                     case 'X':
                         if (!this.capabilities.hasCapability(X_AXIS))
@@ -133,6 +141,15 @@ public class GrblMega5XController extends GrblController {
                         break;
                 }
             }
+            // Record Axis ordering as a capability
+            if (order.isPresent()) {
+                AxisOrder = order.get();
+                this.capabilities.addCapability(AXIS_ORDERING);
+            } else {
+                AxisOrder = "XYZABC";
+            }
+            // Log outcome, and to aid diagnostics
+            logger.log(Level.INFO,"Axis Count: " + axes.get() + " Order: " + order.get());
         }
 
         super.rawResponseHandler(response);
