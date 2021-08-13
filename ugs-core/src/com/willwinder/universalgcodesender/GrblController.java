@@ -66,9 +66,9 @@ public class GrblController extends AbstractController {
     public ControllerStatus controllerStatus = new ControllerStatus(ControllerState.DISCONNECTED, new Position(0,0,0,Units.MM), new Position(0,0,0,Units.MM));
 
     // Canceling state
-    private Boolean isCanceling = false;     // Set for the position polling thread.
-    private int attemptsRemaining;
-    private Position lastLocation;
+    protected Boolean isCanceling = false;     // Set for the position polling thread.
+    protected int attemptsRemaining;
+    protected Position lastLocation;
 
     /**
      * For storing a temporary state if using single step mode when entering the state

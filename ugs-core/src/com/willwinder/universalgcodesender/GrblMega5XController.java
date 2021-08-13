@@ -194,7 +194,36 @@ public class GrblMega5XController extends GrblController {
             temporaryCheckSingleStepMode = getSingleStepMode();
             setSingleStepMode(true);
         }
+        
+        // Prior to GRBL v1.1 the GUI is required to keep checking locations
+        // to verify that the machine has come to a complete stop after
+        // pausing.
+        if (isCanceling) {
+            if (attemptsRemaining > 0 && lastLocation != null) {
+                attemptsRemaining--;
+                // If the machine goes into idle, we no longer need to cancel.
+                if (controllerStatus.getState() == ControllerState.IDLE || controllerStatus.getState() == ControllerState.CHECK) {
+                    isCanceling = false;
 
+                    // Make sure the GUI gets updated
+                    this.dispatchStateChange(getControlState());
+                }
+                // Otherwise check if the machine is Hold/Queue and stopped.
+                else if (controllerStatus.getState() == ControllerState.HOLD && lastLocation.equals(this.controllerStatus.getMachineCoord())) {
+                    try {
+                        this.issueSoftReset();
+                    } catch(Exception e) {
+                        this.dispatchConsoleMessage(MessageType.ERROR, e.getMessage() + "\n");
+                    }
+                    isCanceling = false;
+                }
+                if (isCanceling && attemptsRemaining == 0) {
+                    this.dispatchConsoleMessage(MessageType.ERROR, Localization.getString("grbl.exception.cancelReset") + "\n");
+                }
+            }
+            lastLocation = new Position(this.controllerStatus.getMachineCoord());
+        }
+        
         dispatchStatusString(controllerStatus);
     }
 }
