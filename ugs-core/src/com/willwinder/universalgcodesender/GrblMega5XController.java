@@ -81,7 +81,6 @@ public class GrblMega5XController extends GrblController {
     }
 
     // Grbl Mega5X can sequence axis letters differently to XYZABC
-    @Override
     public String getAxisLetterOrder(){
         return AxisOrder;    
     }
@@ -174,6 +173,7 @@ public class GrblMega5XController extends GrblController {
         UGSEvent.ControlState before = getControlState();
         ControllerState beforeState = controllerStatus == null ? ControllerState.UNKNOWN : controllerStatus.getState();
 
+        // Hook Mega5X specific utils
         controllerStatus = GrblMega5XUtils.getStatusFromStatusString(
                 controllerStatus, string, capabilities, getFirmwareSettings().getReportingUnits(), AxisOrder);
 

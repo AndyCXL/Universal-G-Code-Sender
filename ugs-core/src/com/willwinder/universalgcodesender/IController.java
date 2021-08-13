@@ -213,7 +213,6 @@ public interface IController {
      * @return the supported capabilities for the controller.
      */
     Capabilities getCapabilities();
-    String getAxisLetterOrder();
     
     /**
      * Fetches the firmware settings for the controller that can be used for

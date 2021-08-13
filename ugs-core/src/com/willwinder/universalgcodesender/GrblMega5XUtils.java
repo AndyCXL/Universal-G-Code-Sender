@@ -171,10 +171,6 @@ public class GrblMega5XUtils extends GrblUtils {
         // and added capabilities according to each unique axis letter, even if the count
         // of axes was greater (XYZYA is 4 distinct letters 5 positions). Position reporting
         // is per physical axis, so XYZYA is the string order even though Y is duplicated
-        // All other controllers it appears are XYZABC order for the reported axis count
-        //
-        // AbstractController and overrides now has String getAxisLetterOrder() which returns
-        // the controller's obtained (eg: XYZYA) or presumed default ordering (XYZABC)
         */
         Matcher matcher = pattern.matcher(status);
       
@@ -182,44 +178,30 @@ public class GrblMega5XUtils extends GrblUtils {
         if (matcher.find()) {
             // Is Axis ordering default, or dictated by the controller
             // String axisOrder defines the order
-            Position result = new Position(Double.parseDouble(matcher.group(1)),
-                    Double.parseDouble(matcher.group(2)),
-                    Double.parseDouble(matcher.group(3)),
-                    reportingUnits);
-
-            char nthOrderChar;
-            for (int n=4; n<= axisOrder.length(); n++) {
-                nthOrderChar = axisOrder.charAt(n);
-                switch (n) {
-                    case 4: switch (nthOrderChar) {
-                        case 'X': result.x = Double.parseDouble(matcher.group(n));
-                        case 'Y': result.y = Double.parseDouble(matcher.group(n));
-                        case 'Z': result.z = Double.parseDouble(matcher.group(n));
-                        case 'A': result.a = Double.parseDouble(matcher.group(n));
-                        case 'B': result.b = Double.parseDouble(matcher.group(n));
-                        case 'C': result.c = Double.parseDouble(matcher.group(n));
-                        }
-                    break;
-                    case 5: switch (nthOrderChar) {
-                        case 'X': result.x = Double.parseDouble(matcher.group(n));
-                        case 'Y': result.y = Double.parseDouble(matcher.group(n));
-                        case 'Z': result.z = Double.parseDouble(matcher.group(n));
-                        case 'A': result.a = Double.parseDouble(matcher.group(n));
-                        case 'B': result.b = Double.parseDouble(matcher.group(n));
-                        case 'C': result.c = Double.parseDouble(matcher.group(n));
-                        }
-                    break;
-                    case 6: switch (nthOrderChar) {
-                        case 'X': result.x = Double.parseDouble(matcher.group(n));
-                        case 'Y': result.y = Double.parseDouble(matcher.group(n));
-                        case 'Z': result.z = Double.parseDouble(matcher.group(n));
-                        case 'A': result.a = Double.parseDouble(matcher.group(n));
-                        case 'B': result.b = Double.parseDouble(matcher.group(n));
-                        case 'C': result.c = Double.parseDouble(matcher.group(n));
-                        }
-                    break;
-                    }
-                }
+            if ("".equals(axisOrder)) {
+                axisOrder = "XYZABC";
+            }
+            
+            // pX contains the integer position of X in axisOrder
+            // indexOf returns 0th index of first match, or -1 if no match
+            int pX = axisOrder.indexOf("X")+1;
+            int pY = axisOrder.indexOf("Y")+1;
+            int pZ = axisOrder.indexOf("Z")+1;
+            int pA = axisOrder.indexOf("A")+1;
+            int pB = axisOrder.indexOf("B")+1;
+            int pC = axisOrder.indexOf("C")+1;
+            
+            // Position is a fixed order structurem indexOf bridges to axisOrder
+            Position result = new Position(
+                    pX > 0 ? Double.parseDouble(matcher.group(pX)) : 0.00,
+                    pY > 0 ? Double.parseDouble(matcher.group(pY)) : 0.00,
+                    pZ > 0 ? Double.parseDouble(matcher.group(pZ)) : 0.00,
+                    pA > 0 ? Double.parseDouble(matcher.group(pA)) : 0.00,
+                    pB > 0 ? Double.parseDouble(matcher.group(pB)) : 0.00,
+                    pC > 0 ? Double.parseDouble(matcher.group(pC)) : 0.00,
+                    reportingUnits
+            );
+            
             return result;
         }
         // No match, default return null
