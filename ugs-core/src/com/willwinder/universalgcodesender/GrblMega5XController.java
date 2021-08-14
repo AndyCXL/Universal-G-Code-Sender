@@ -39,13 +39,12 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import static com.willwinder.universalgcodesender.CapabilitiesConstants.*;
 
 import static com.willwinder.universalgcodesender.model.UGSEvent.ControlState.COMM_CHECK;
 import static com.willwinder.universalgcodesender.model.UGSEvent.ControlState.COMM_IDLE;
-
-import static com.willwinder.universalgcodesender.CapabilitiesConstants.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * GRBL Control layer, coordinates all aspects of control.
@@ -69,10 +68,6 @@ public class GrblMega5XController extends AbstractController {
     // Polling state
     public ControllerStatus controllerStatus = new ControllerStatus(ControllerState.DISCONNECTED, new Position(0,0,0,Units.MM), new Position(0,0,0,Units.MM));
 
-    // Mega5X specific axis
-    static String axisOrder = null;
-    static Pattern axisCountPattern = Pattern.compile("\\[AXS:(\\d*):([XYZABC]*)]");
-    
     // Canceling state
     protected Boolean isCanceling = false;     // Set for the position polling thread.
     protected int attemptsRemaining;
@@ -99,6 +94,10 @@ public class GrblMega5XController extends AbstractController {
         this(new GrblCommunicator());
     }
 
+    // Axis order
+    static String axisOrder = null;
+    static Pattern axisCountPattern = Pattern.compile("\\[AXS:(\\d*):([XYZABC]*)]");
+    
     Optional<Integer> getAxisCount(String response) {
         Matcher m = axisCountPattern.matcher(response);
         if (!m.find()) {
@@ -241,6 +240,7 @@ public class GrblMega5XController extends AbstractController {
             );
         }
         //
+        //
         String processed = response;
         try {
             boolean verbose = false;
@@ -321,7 +321,7 @@ public class GrblMega5XController extends AbstractController {
             }
             
             else if (GrblMega5XUtils.isGrblProbeMessage(response)) {
-                Position p = GrblMega5XUtils.parseProbePosition(response, getFirmwareSettings().getReportingUnits());
+                Position p = GrblMega5XUtils.parseProbePosition(response, getFirmwareSettings().getReportingUnits(), axisOrder);
                 if (p != null) {
                     dispatchProbeCoordinates(p);
                 }
@@ -778,10 +778,4 @@ public class GrblMega5XController extends AbstractController {
             this.comm.sendByteImmediately(realTimeCommand);
         }
     }
-    
-    // Grbl Mega5X can sequence axis letters differently to XYZABC
-    public String getAxisLetterOrder(){
-        return axisOrder;    
-    }
-
 }
