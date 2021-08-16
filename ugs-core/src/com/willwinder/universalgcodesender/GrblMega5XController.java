@@ -40,12 +40,18 @@ public class GrblMega5XController extends GrblController {
     static String axisOrder = "XYZABC";
     static Pattern axisCountPattern = Pattern.compile("\\[AXS:(\\d*):([XYZABC]*)]");
 
+    /* Super() refers:
+    public GrblController() {
+        this(new GrblCommunicator());
+    }
+    */
 
     public GrblMega5XController() {
         super();
+        //this(new GrblMega5XCommunicator()); // fails...?
         this.capabilities.addCapability(GrblCapabilitiesConstants.V1_FORMAT);
     }
-
+    
     Optional<Integer> getAxisCount(String response) {
         Matcher m = axisCountPattern.matcher(response);
         if (!m.find()) {
