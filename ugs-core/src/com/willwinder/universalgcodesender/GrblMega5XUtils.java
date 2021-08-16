@@ -117,10 +117,10 @@ public class GrblMega5XUtils {
     static protected String getHomingCommand(final double version, final Character letter) {
         if ((version >= 0.8 && (letter != null) && (letter >= 'c'))
                 || version >= 0.9) {
-            return GrblMega5XUtils.GCODE_PERFORM_HOMING_CYCLE_V8C;
+            return GCODE_PERFORM_HOMING_CYCLE_V8C;
         }
         else if (version >= 0.8) {
-            return GrblMega5XUtils.GCODE_PERFORM_HOMING_CYCLE_V8;
+            return GCODE_PERFORM_HOMING_CYCLE_V8;
         }
         else {
             return "";
@@ -129,15 +129,15 @@ public class GrblMega5XUtils {
     
     static protected String getResetCoordsToZeroCommand(final double version, final Character letter) {
         if (version >= 0.9) {
-            return GrblMega5XUtils.GCODE_RESET_COORDINATES_TO_ZERO_V9;
+            return GCODE_RESET_COORDINATES_TO_ZERO_V9;
         }
         else if (version >= 0.8 && (letter != null) && (letter >= 'c')) {
             // TODO: Is G10 available in 0.8c?
             // No it is not -> error: Unsupported statement
-            return GrblMega5XUtils.GCODE_RESET_COORDINATES_TO_ZERO_V8;
+            return GCODE_RESET_COORDINATES_TO_ZERO_V8;
         }
         else if (version >= 0.8) {
-            return GrblMega5XUtils.GCODE_RESET_COORDINATES_TO_ZERO_V8;
+            return GCODE_RESET_COORDINATES_TO_ZERO_V8;
         }
         else {
             return "";
@@ -167,12 +167,12 @@ public class GrblMega5XUtils {
     protected static String getSetCoordCommand(PartialPosition offsets, final double grblVersion, final Character grblVersionLetter) {
         String coordsString = offsets.getFormattedGCode();
         if (grblVersion >= 0.9) {
-            return GrblMega5XUtils.GCODE_SET_COORDINATE_V9 + " " + coordsString;
+            return GCODE_SET_COORDINATE_V9 + " " + coordsString;
         }
         else if (grblVersion >= 0.8 && (grblVersionLetter != null) && (grblVersionLetter >= 'c')) {
             // TODO: Is G10 available in 0.8c?
             // No it is not -> error: Unsupported statement
-            return GrblMega5XUtils.GCODE_SET_COORDINATE_V8 + " " + coordsString;
+            return GCODE_SET_COORDINATE_V8 + " " + coordsString;
         }
         else if (grblVersion >= 0.8) {
             return "";
@@ -186,7 +186,7 @@ public class GrblMega5XUtils {
     static protected String getKillAlarmLockCommand(final double version, final Character letter) {
         if ((version >= 0.8 && (letter != null) && letter >= 'c')
                 || version >= 0.9) {
-            return GrblMega5XUtils.GRBL_KILL_ALARM_LOCK_COMMAND;
+            return GRBL_KILL_ALARM_LOCK_COMMAND;
         }
         else {
             return "";
@@ -196,7 +196,7 @@ public class GrblMega5XUtils {
     static protected String getToggleCheckModeCommand(final double version, final Character letter) {
         if ((version >= 0.8 && (letter != null) && letter >= 'c')
                 || version >= 0.9) {
-            return GrblMega5XUtils.GRBL_TOGGLE_CHECK_MODE_COMMAND;
+            return GRBL_TOGGLE_CHECK_MODE_COMMAND;
         }
         else {
             return "";
@@ -206,7 +206,7 @@ public class GrblMega5XUtils {
     static protected String getViewParserStateCommand(final double version, final Character letter) {
         if ((version >= 0.8 && (letter != null) && letter >= 'c')
                 || version >= 0.9) {
-            return GrblMega5XUtils.GRBL_VIEW_PARSER_STATE_COMMAND;
+            return GRBL_VIEW_PARSER_STATE_COMMAND;
         }
         else {
             return "";
@@ -259,7 +259,7 @@ public class GrblMega5XUtils {
             return null;
         }
 
-        return GrblMega5XUtils.getPositionFromStatusString(response, PROBE_POSITION_PATTERN, units, axisOrder);
+        return getPositionFromStatusString(response, PROBE_POSITION_PATTERN, units, axisOrder);
     }
     
     /**
@@ -379,13 +379,13 @@ public class GrblMega5XUtils {
                     stateString = part.substring(1, idx);
             }
             else if (part.startsWith("MPos:")) {
-                MPos = GrblMega5XUtils.getPositionFromStatusString(status, machinePattern, reportingUnits, axisOrder);
+                MPos = getPositionFromStatusString(status, machinePattern, reportingUnits, axisOrder);
             }
             else if (part.startsWith("WPos:")) {
-                WPos = GrblMega5XUtils.getPositionFromStatusString(status, workPattern, reportingUnits, axisOrder);
+                WPos = getPositionFromStatusString(status, workPattern, reportingUnits, axisOrder);
             }
             else if (part.startsWith("WCO:")) {
-                WCO = GrblMega5XUtils.getPositionFromStatusString(status, wcoPattern, reportingUnits, axisOrder);
+                WCO = getPositionFromStatusString(status, wcoPattern, reportingUnits, axisOrder);
             }
             else if (part.startsWith("Ov:")) {
                 isOverrideReport = true;
@@ -533,7 +533,7 @@ public class GrblMega5XUtils {
 
     static protected Position getMachinePositionFromStatusString(final String status, final Capabilities version, Units reportingUnits, String axisOrder) {
         if (version.hasCapability(GrblCapabilitiesConstants.REAL_TIME)) {
-            return GrblMega5XUtils.getPositionFromStatusString(status, machinePattern, reportingUnits, axisOrder);
+            return getPositionFromStatusString(status, machinePattern, reportingUnits, axisOrder);
         } else {
             return null;
         }
@@ -541,7 +541,7 @@ public class GrblMega5XUtils {
     
     static protected Position getWorkPositionFromStatusString(final String status, final Capabilities version, Units reportingUnits, String axisOrder) {
         if (version.hasCapability(GrblCapabilitiesConstants.REAL_TIME)) {
-            return GrblMega5XUtils.getPositionFromStatusString(status, workPattern, reportingUnits, axisOrder);
+            return getPositionFromStatusString(status, workPattern, reportingUnits, axisOrder);
         } else {
             return null;
         }
@@ -574,14 +574,15 @@ public class GrblMega5XUtils {
             
             // Position is a fixed order structurem indexOf bridges to axisOrder
             Position result = new Position(
-                    pX > 0 ? Double.parseDouble(matcher.group(pX)) : 0.00,
-                    pY > 0 ? Double.parseDouble(matcher.group(pY)) : 0.00,
-                    pZ > 0 ? Double.parseDouble(matcher.group(pZ)) : 0.00,
-                    pA > 0 ? Double.parseDouble(matcher.group(pA)) : 0.00,
-                    pB > 0 ? Double.parseDouble(matcher.group(pB)) : 0.00,
-                    pC > 0 ? Double.parseDouble(matcher.group(pC)) : 0.00,
+                    pX > 0 ? Double.parseDouble(matcher.group(pX)) : 0.00D,
+                    pY > 0 ? Double.parseDouble(matcher.group(pY)) : 0.00D,
+                    pZ > 0 ? Double.parseDouble(matcher.group(pZ)) : 0.00D,
                     reportingUnits
             );
+            
+            result.a = pA > 0 ? Double.parseDouble(matcher.group(pA)) : 0.00D;
+            result.b = pB > 0 ? Double.parseDouble(matcher.group(pB)) : 0.00D;
+            result.c = pC > 0 ? Double.parseDouble(matcher.group(pC)) : 0.00D;
             
             return result;
         }
@@ -666,10 +667,10 @@ public class GrblMega5XUtils {
         if (StringUtils.isEmpty(response)) {
             gcodeCommand.setOk(false);
             gcodeCommand.setError(false);
-        } else if (GrblMega5XUtils.isOkResponse(response)) {
+        } else if (isOkResponse(response)) {
             gcodeCommand.setOk(true);
             gcodeCommand.setError(false);
-        } else if (GrblMega5XUtils.isErrorResponse(response) || GrblMega5XUtils.isAlarmResponse(response)) {
+        } else if (isErrorResponse(response) || isAlarmResponse(response)) {
             gcodeCommand.setOk(false);
             gcodeCommand.setError(true);
         }

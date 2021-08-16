@@ -596,7 +596,7 @@ public class GrblController extends AbstractController {
 
     // No longer a listener event
     //private void handleStatusString(final String string) {
-    public void handleStatusString(final String string) {
+    protected void handleStatusString(final String string) {
         if (this.capabilities == null) {
             return;
         }
