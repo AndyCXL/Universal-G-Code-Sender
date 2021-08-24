@@ -81,7 +81,7 @@ public class PatternRemover implements CommandProcessor {
                 break;
         }
     }
-    
+
     @Override
     public String getHelp() {
         return Localization.getString("sender.help.patternRemover")
