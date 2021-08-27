@@ -26,6 +26,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.willwinder.universalgcodesender.CapabilitiesConstants.*;
+import com.willwinder.universalgcodesender.firmware.grbl.GrblFirmwareSettings;
+import com.willwinder.universalgcodesender.gcode.GcodeCommandCreator;
 import com.willwinder.universalgcodesender.i18n.Localization;
 import com.willwinder.universalgcodesender.listeners.ControllerState;
 import com.willwinder.universalgcodesender.listeners.MessageType;
@@ -34,12 +36,27 @@ import com.willwinder.universalgcodesender.model.UGSEvent;
 import static com.willwinder.universalgcodesender.model.UGSEvent.ControlState.COMM_CHECK;
 
 public class GrblMega5XController extends GrblController {
+    private StatusPollTimer positionPollTimer;
+    private final GrblFirmwareSettings firmwareSettings;
+    
     private final Capabilities capabilities = new Capabilities();
     private static final Logger logger = Logger.getLogger(GrblMega5XController.class.getName());
     
     static String axisOrder = "XYZABC";
     static Pattern axisCountPattern = Pattern.compile("\\[AXS:(\\d*):([XYZABC]*)]");
 
+    
+    public GrblMega5XController(AbstractCommunicator comm) {
+        super(comm);
+        
+        this.commandCreator = new GcodeCommandCreator();
+        this.positionPollTimer = new StatusPollTimer(this);
+
+        // Add our controller settings manager
+        this.firmwareSettings = new GrblFirmwareSettings(this);
+        this.comm.addListener(firmwareSettings);
+    }
+    
     /* Super() refers:
     public GrblController() {
         this(new GrblCommunicator());
@@ -47,8 +64,8 @@ public class GrblMega5XController extends GrblController {
     */
 
     public GrblMega5XController() {
-        super();
-        //this(new GrblMega5XCommunicator()); // fails...?
+        //super();
+        this(new GrblMega5XCommunicator()); // fails...?
         this.capabilities.addCapability(GrblCapabilitiesConstants.V1_FORMAT);
     }
     

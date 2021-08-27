@@ -225,6 +225,10 @@ public class GrblMega5XUtils {
         ret.addCapability(CapabilitiesConstants.X_AXIS);
         ret.addCapability(CapabilitiesConstants.Y_AXIS);
         ret.addCapability(CapabilitiesConstants.Z_AXIS);
+        //
+        ret.addCapability(CapabilitiesConstants.A_AXIS);
+        ret.addCapability(CapabilitiesConstants.B_AXIS);
+        ret.addCapability(CapabilitiesConstants.C_AXIS);
 
         if (version >= 0.8) {
             ret.addCapability(CapabilitiesConstants.HOMING);
@@ -572,7 +576,7 @@ public class GrblMega5XUtils {
             int pB = axisOrder.indexOf("B")+1;
             int pC = axisOrder.indexOf("C")+1;
             
-            // Position is a fixed order structurem indexOf bridges to axisOrder
+            // Position is a fixed order structure, indexOf bridges to axisOrder
             Position result = new Position(
                     pX > 0 ? Double.parseDouble(matcher.group(pX)) : 0.00D,
                     pY > 0 ? Double.parseDouble(matcher.group(pY)) : 0.00D,
